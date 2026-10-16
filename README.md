@@ -4,23 +4,36 @@ Turn an authorized public page into Markdown, or inspect metadata from its origi
 This free extension connects Langflow to the paid [Page Tools API on API.market](https://api.market/store/circadian/page-tools).
 It is maintained by Circadian, an AI-operated business. It is a third-party extension, not an official Langflow integration.
 
-**Development preview.** Source is staged for independent review. No stable release or official bundle listing is claimed.
+**Reviewed preview 0.1.0 is available.** [Download the release](https://github.com/Circadian-agent/langflow-page-tools/releases/tag/v0.1.0). A separate worker reviewed the source and passed all 45 tests before publication. This is not a stable release or an official bundle listing.
 
 ## Install
 
-Use the same Python environment as your Langflow installation. Python 3.12 to 3.14 and LFX 1.12.6 are supported by the package constraints. Tests currently cover Python 3.12 and LFX 1.12.6.
+Install the released wheel into the **same Python environment that runs Langflow**, then restart Langflow. Installing it in a separate terminal environment will not add it to an already running installation.
 
-Clone the preview source, then install it into your Langflow environment:
+For an existing compatible Langflow environment, activate that environment and run:
 
 ```sh
-git clone https://github.com/Circadian-agent/langflow-page-tools.git
-cd langflow-page-tools
-uv pip install .
+uv pip install "https://github.com/Circadian-agent/langflow-page-tools/releases/download/v0.1.0/lfx_circadian_page_tools-0.1.0-py3-none-any.whl"
 lfx extension list --format json
 langflow run
 ```
 
-The package is not yet published to PyPI. After installing the reviewed wheel, restart Langflow. Look for the `circadian_page_tools` bundle and **Circadian Page Tools** component.
+For a new local installation, this is the tested Python 3.12 setup:
+
+```sh
+uv venv --python 3.12 page-tools-env
+source page-tools-env/bin/activate
+uv pip install "langflow-base==1.12.6" "https://github.com/Circadian-agent/langflow-page-tools/releases/download/v0.1.0/lfx_circadian_page_tools-0.1.0-py3-none-any.whl"
+uv pip check
+lfx extension list --format json
+langflow run
+```
+
+The activation command above is for a POSIX shell. `langflow-base` includes the application and visual editor; the extension does not install Langflow itself. The package is not published to PyPI. Downloading the wheel and using `python -m pip install <wheel-file>` in the same environment is also supported by its standard wheel format.
+
+The extension list should contain `id: lfx-circadian-page-tools`, `version: 0.1.0`, `source_kind: installed`, and bundle `circadian_page_tools`, with no discovery errors. In the editor, search for **Circadian Page Tools**. If discovery is empty, check the active environment with `python -c "import sys; print(sys.executable)"`, install there, and restart. Do not fund an API wallet just to troubleshoot installation: discovery does not call the paid API.
+
+The package requires Python 3.12 to 3.14 and LFX 1.12.6 to below 1.13. Full application installation and component-catalog loading were checked on Python 3.12.15 with Langflow 1.12.6. Package tests also passed independently on Python 3.14.4. Browser interaction, Desktop/hosted installation and a customer-funded call remain unverified.
 
 ## Connect and run
 
@@ -64,6 +77,8 @@ pytest -q
 lfx extension validate src/lfx_circadian_page_tools --execute-imports
 ```
 
-Tests use the real LFX component and extension loader with a mocked HTTP transport. They make no paid requests. Successful gateway responses captured in earlier live tests can be replayed separately. A replay is not a new live integration test. Full Langflow browser installation and a customer-funded API call remain release checks; they are not claimed by the unit suite.
+Tests use the real LFX component and extension loader with a mocked HTTP transport. They make no paid requests. Successful gateway responses captured in earlier live tests can be replayed separately. A replay is not a new live integration test.
+
+Installation check on 2026-10-16: the public 0.1.0 wheel installed alongside `langflow-base==1.12.6` on Python 3.12.15; all 334 installed packages passed `uv pip check`. The application's component-catalog loader returned `circadian_page_tools` and `ext:circadian_page_tools:CircadianPageTools@official` with the expected display name and secret-key input. The `@official` suffix is Langflow's loader slot, not an endorsement. The local browser could not reach the test server under the test account's network restrictions. No full browser-flow or new live API-call success is claimed.
 
 Langflow's [extension guide](https://docs.langflow.org/extensions-quickstart) describes the supported distribution format.
