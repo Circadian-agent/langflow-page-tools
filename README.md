@@ -1,7 +1,7 @@
 # Circadian Page Tools for Langflow
 
 Turn an authorized public page into Markdown, or inspect metadata from its original HTML.
-This free extension connects Langflow to the paid [Page Tools API on API.market](https://api.market/store/circadian/page-tools).
+This free extension connects Langflow to [Page Tools on API.market](https://api.market/store/circadian/page-tools), with a 10-call free trial and optional pay-as-you-go use.
 It is maintained by Circadian, an AI-operated business. It is a third-party extension, not an official Langflow integration.
 
 **Reviewed preview 0.1.0 is available.** [Download the release](https://github.com/Circadian-agent/langflow-page-tools/releases/tag/v0.1.0). A separate worker reviewed the source and passed all 45 tests before publication. This is not a stable release or an official bundle listing.
@@ -37,13 +37,15 @@ The package requires Python 3.12 to 3.14 and LFX 1.12.6 to below 1.13. Full appl
 
 ## Connect and run
 
-1. Sign in to API.market and enable [Page Tools](https://api.market/store/circadian/page-tools).
-2. The public plan currently costs **USD0.005 per API call**, with a minimum **USD1 wallet balance**. Confirm current pricing before funding the wallet. This extension does not manage billing or include free credits.
+1. Open [Page Tools on API.market](https://api.market/store/circadian/page-tools), select **FREE**, then **Subscribe to Free Trial for $0**. Sign in or create your API.market account when prompted. The listing may initially select PAYG, so choose FREE to evaluate without funding a wallet.
+2. Confirm **Free Trial** and **$0** before activating. It includes **10 calls across both endpoints over seven days**, once per customer. No credit card is required, and there are no paid overages. It allows **one request per second**.
 3. Save your API.market key as a secret global variable in Langflow. Select it in **API.market API Key**. Avoid literal keys in saved or shared flows. A password field masks the editor; it is not a guarantee that exported flows remove literal values.
 4. Select **Extract Markdown** or **Page Metadata** and enter a public page such as `https://example.com`.
-5. Run the component once. Read **Page Data**. For extraction, use its `markdown` field downstream. For metadata, inspect `title`, `description`, `canonical`, `openGraph`, `twitter`, and `jsonLd` when present.
+5. Run the component once. Read **Page Data**. For extraction, use its `markdown` field downstream. For metadata, inspect `title`, `description`, `canonical`, `openGraph`, `twitter`, and `jsonLd` when present. Trying both actions consumes two included calls when both succeed; leave at least one second between requests during the trial.
 
-The component has one output and performs one API request per execution. A second execution is another request. Agent Tool Mode exposes the URL as an argument; the key and action remain configured by the flow author. Autonomous agent loops can execute the tool repeatedly and incur charges. Use your own run limits.
+When the trial allowance or time runs out, choose **PAYG** if you want to continue at **USD0.005 per billable call**. PAYG requires a minimum **USD1 wallet balance** and has no monthly fee. Confirm current terms on the listing. API.market manages the trial and billing; this extension includes no API key. The 0.1.0 package's embedded descriptions predate the trial. Use this guide and the live listing for current plans.
+
+The component has one output and performs one API request per execution. A second execution is another request. Agent Tool Mode exposes the URL as an argument; the key and action remain configured by the flow author. Autonomous agent loops can consume the trial allowance or incur PAYG charges. Use your own run limits.
 
 ## What the output means
 
@@ -57,7 +59,7 @@ This API reads server-provided HTML. It does not render JavaScript, bypass login
 
 The extension has a fixed HTTPS gateway. It sends the key only in `x-api-market-key` and sends the target as an encoded query parameter. It does not follow gateway redirects, probe credentials, or automatically retry. Network timeouts can occur after a charge. Check API.market usage before manually retrying.
 
-401/403: check your key and product access. 402: check the plan and wallet. 429: stop and check limits; do not repeatedly retry. Other failures raise a short error without including upstream response bodies or credentials. Failed calls may be billed under the marketplace's terms. Responses are limited to 2 MB.
+401/403: check your key and product access. 402: check the selected plan and, for PAYG, the wallet. 429: stop and check API.market usage and trial status. If the trial is exhausted or expired, repeated retries cannot restore it. For a rate limit, space requests apart and follow any retry delay shown by API.market. The component reports a short error without upstream response bodies, so use the marketplace dashboard to distinguish these cases. A gateway 2XX response can be billable on PAYG even if the component rejects its payload or target status. Responses are limited to 2 MB.
 
 The client rejects common private/local URL forms. Backend DNS and redirect validation are the actual network boundary. Do not use this local syntax check as a standalone SSRF filter.
 
