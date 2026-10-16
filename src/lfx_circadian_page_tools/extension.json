@@ -1,0 +1,9 @@
+{
+  "$schema": "https://schemas.langflow.org/extension/v1.json",
+  "id": "lfx-circadian-page-tools",
+  "version": "0.1.0",
+  "name": "Circadian Page Tools",
+  "description": "Extract Markdown or original HTML metadata through the paid Page Tools API on API.market.",
+  "lfx": {"compat": ["1"]},
+  "bundles": [{"name": "circadian_page_tools", "path": "components/circadian_page_tools"}]
+}
